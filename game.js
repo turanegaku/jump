@@ -20,6 +20,8 @@ var GAME = 1;
 
 var step = TITLE;
 
+var trg = 1000;
+
 function setup() {
   createCanvas(800, 480).parent('p5Canvas');
   fox = loadImage('./kitune.png');
@@ -27,8 +29,6 @@ function setup() {
   raccoon2 = loadImage('./tanuki2.png');
   textAlign(CENTER);
   textSize(50);
-
-  foxsx.push(900);
 }
 
 function draw() {
@@ -68,6 +68,10 @@ function draw() {
 
   if (step == GAME) {
     score += scored;
+    if (trg < score) {
+      trg += 1000;
+      foxsx.push(1000);
+    }
 
     $.each(foxsx, function(i, foxx) {
       textSize(10);
@@ -75,7 +79,7 @@ function draw() {
       // text(int(foxsx[i]), 100 + i * 100, 100);
       foxsx[i] -= scored2 * scored;
       if (foxsx[i] < -200) {
-        foxsx[i] = 1200 + random(-100, 100);
+        foxsx[i] = 1200 + random(-100, 100 + scored);
       }
     });
   } else {
@@ -91,6 +95,7 @@ function press() {
     step = GAME;
     score = 0;
     foxsx = [900, 1800];
+    trg = 1000;
   } else {
     if (!raccoonjump) {
       raccoonjump = true;
