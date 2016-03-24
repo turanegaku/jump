@@ -10,7 +10,9 @@ var SIZE = 100;
 
 var raccoondy = 0;
 var raccoonv = 0;
-var raccoonjump = false;
+var raccoonjump = 0;
+
+var time = -1000;
 
 function Enemy(i, x) {
   this.i = i;
@@ -30,7 +32,7 @@ var step = TITLE;
 var trg = 1000;
 
 function setup() {
-  createCanvas(800, 480).parent('p5Canvas');
+  createCanvas(800, 450).parent('p5Canvas');
   fox.push(loadImage('./kitune.png'));
   fox.push(loadImage('./tori.png'));
   raccoon = loadImage('./tanuki.png');
@@ -44,28 +46,34 @@ function draw() {
   var scored = 0.5 + sqrt(sqrt(score)) / 100;
   var scored2 = 5 + sqrt(score) / 20;
 
-  if (raccoonjump) {
+  if (raccoonjump > 0) {
     raccoondy += raccoonv;
     raccoonv -= 0.4;
-    if (raccoonv <= -raccoonV) raccoonjump = false;
-    scored += 0.1;
+    if (raccoondy < 0 && raccoonv < 0) {
+      raccoondy = 0;
+      raccoonjump = 0;
+    }
+    scored += 0.1 * raccoonjump;
   } else {
     raccoondy = 0;
   }
   var D = 60 * 60;
 
-  $.each(foxsx, function(i, foxx) {
-    if ((raccoonY - raccoondy - foxY[foxx.i]) * (raccoonY - raccoondy - foxY[foxx.i]) + (raccoonX - foxx.x) * (raccoonX - foxx.x) < D) {
-      step = TITLE;
-    }
-  });
+  if (step == GAME) {
+    $.each(foxsx, function(i, foxx) {
+      if ((raccoonY - raccoondy - foxY[foxx.i]) * (raccoonY - raccoondy - foxY[foxx.i]) + (raccoonX - foxx.x) * (raccoonX - foxx.x) < D) {
+        step = TITLE;
+        time = frameCount;
+      }
+    });
+  }
   beginShape();
   for (var i = -100; i < 900; i += 10) {
     vertex(i, raccoonY + 120 + sin(radians(i + score * scored2)) * 10);
   }
   vertex();
   endShape();
-  if (int((score / 10)) % 2 === 0 || raccoonjump) {
+  if (int((score / 10)) % 2 === 0 || raccoonjump > 0) {
     image(raccoon, raccoonX, raccoonY - raccoondy, SIZE, SIZE);
   } else {
     image(raccoon2, raccoonX, raccoonY - raccoondy, SIZE, SIZE);
@@ -100,15 +108,17 @@ function draw() {
 }
 
 function press() {
-  if (step == TITLE) {
-    step = GAME;
-    score = 0;
-    foxsx = [new Enemy(0, 900), new Enemy(0, 1800)];
-    trg = 1000;
-  } else {
-    if (!raccoonjump) {
-      raccoonjump = true;
-      raccoonv = raccoonV;
+  if (frameCount - time > 30) {
+    if (step == TITLE) {
+      step = GAME;
+      score = 0;
+      foxsx = [new Enemy(0, 900), new Enemy(0, 1800)];
+      trg = 1000;
+    } else {
+      if (raccoonjump < 2) {
+        raccoonjump++;
+        raccoonv = raccoonV;
+      }
     }
   }
 }
