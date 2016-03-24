@@ -12,8 +12,15 @@ var raccoondy = 0;
 var raccoonv = 0;
 var raccoonjump = false;
 
-var fox;
-var foxsx = [900, 1800];
+function Enemy(i, x) {
+  this.i = i;
+  this.x = x;
+}
+
+var foxY = [300, 120];
+var fox = [];
+var foxsx = [];
+
 
 var TITLE = 0;
 var GAME = 1;
@@ -24,7 +31,8 @@ var trg = 1000;
 
 function setup() {
   createCanvas(800, 480).parent('p5Canvas');
-  fox = loadImage('./kitune.png');
+  fox.push(loadImage('./kitune.png'));
+  fox.push(loadImage('./tori.png'));
   raccoon = loadImage('./tanuki.png');
   raccoon2 = loadImage('./tanuki2.png');
   textAlign(CENTER);
@@ -47,7 +55,7 @@ function draw() {
   var D = 60 * 60;
 
   $.each(foxsx, function(i, foxx) {
-    if (raccoondy * raccoondy + (raccoonX - foxx) * (raccoonX - foxx) < D) {
+    if ((raccoonY - raccoondy - foxY[foxx.i]) * (raccoonY - raccoondy - foxY[foxx.i]) + (raccoonX - foxx.x) * (raccoonX - foxx.x) < D) {
       step = TITLE;
     }
   });
@@ -63,23 +71,24 @@ function draw() {
     image(raccoon2, raccoonX, raccoonY - raccoondy, SIZE, SIZE);
   }
   $.each(foxsx, function(i, foxx) {
-    image(fox, foxx, raccoonY, SIZE, SIZE);
+    image(fox[foxx.i], foxx.x, foxY[foxx.i], SIZE, SIZE);
   });
 
   if (step == GAME) {
     score += scored;
     if (trg < score) {
       trg += 1000;
-      foxsx.push(1000);
+      if (trg === 2000 || trg === 5000) {
+        foxsx.push(new Enemy(1, 1000));
+      } else {
+        foxsx.push(new Enemy(0, 1000));
+      }
     }
 
     $.each(foxsx, function(i, foxx) {
-      textSize(10);
-      textAlign(LEFT);
-      // text(int(foxsx[i]), 100 + i * 100, 100);
-      foxsx[i] -= scored2 * scored;
-      if (foxsx[i] < -200) {
-        foxsx[i] = 1200 + random(-100, 100 + scored);
+      foxsx[i].x -= scored2 * scored;
+      if (foxsx[i].x < -200) {
+        foxsx[i].x = 1200 + random(-100, 100 + scored) + foxx.i * random(100, 500);
       }
     });
   } else {
@@ -94,7 +103,7 @@ function press() {
   if (step == TITLE) {
     step = GAME;
     score = 0;
-    foxsx = [900, 1800];
+    foxsx = [new Enemy(0, 900), new Enemy(0, 1800)];
     trg = 1000;
   } else {
     if (!raccoonjump) {
