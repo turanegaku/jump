@@ -40,7 +40,10 @@ function setup() {
   textAlign(CENTER);
   textSize(50);
 
-  hiscore = document.cookie;
+  hiscore = int(document.cookie);
+  $(window).on("beforeunload", function(e) {
+    document.cookie = hiscore;
+  });
 }
 
 function draw() {
@@ -66,7 +69,6 @@ function draw() {
       if ((raccoonY - raccoondy - foxY[foxx.i]) * (raccoonY - raccoondy - foxY[foxx.i]) + (raccoonX - foxx.x) * (raccoonX - foxx.x) < D) {
         step = TITLE;
         time = frameCount;
-        document.cookie = hiscore;
       }
     });
   }
