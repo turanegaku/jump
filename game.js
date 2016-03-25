@@ -39,6 +39,8 @@ function setup() {
   raccoon2 = loadImage('./tanuki2.png');
   textAlign(CENTER);
   textSize(50);
+
+  hiscore = document.cookie;
 }
 
 function draw() {
@@ -64,6 +66,7 @@ function draw() {
       if ((raccoonY - raccoondy - foxY[foxx.i]) * (raccoonY - raccoondy - foxY[foxx.i]) + (raccoonX - foxx.x) * (raccoonX - foxx.x) < D) {
         step = TITLE;
         time = frameCount;
+        document.cookie = hiscore;
       }
     });
   }
