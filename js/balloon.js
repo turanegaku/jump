@@ -15,11 +15,17 @@ var add_frame = 0;
 
 var apple_img;
 var balloon_img = [];
+var raccoon_img;
+var raccoon2_img;
 
 var result_score;
 var result_frame = 0;
 
-function Balloon(x, y, apple, diff) {
+var BALLOON = 0;
+var APPLE = 1;
+var TANUKI = 2;
+
+function Balloon(x, y, object, diff) {
   this.x = x;
   this.y = y;
   this.dy = -1 * diff;
@@ -28,7 +34,7 @@ function Balloon(x, y, apple, diff) {
   this.r = 50;
   this.i = int(random(3));
 
-  if (apple) {
+  if (object != BALLOON) {
     this.r = 20;
     this.dy = -3 * sqrt(diff);
     this.ddy = 0.1;
@@ -36,10 +42,19 @@ function Balloon(x, y, apple, diff) {
   }
 
   this.draw = function() {
-    if (apple) {
-      image(apple_img, this.x, this.y, this.r * 3, this.r * 3);
-    } else {
-      image(balloon_img[this.i], this.x, this.y + 18, this.r * 6, this.r * 6);
+    switch (object) {
+      case APPLE:
+        image(apple_img, this.x, this.y, this.r * 3, this.r * 3);
+        break;
+      case BALLOON:
+        image(balloon_img[this.i], this.x, this.y + 18, this.r * 6, this.r * 6);
+        break;
+      case TANUKI:
+        if (this.dy <= -1)
+          image(raccoon2_img, this.x, this.y, this.r * 3, this.r * 3);
+        else
+          image(raccoon_img, this.x, this.y, this.r * 3, this.r * 3);
+        break;
     }
   };
 
@@ -50,11 +65,17 @@ function Balloon(x, y, apple, diff) {
   };
 
   this.add_apple = function() {
-    if (!apple) {
-      balloons.push(new Balloon(this.x, this.y, true, diff, false));
-      score += 100;
-    } else {
-      score += 500;
+    switch (object) {
+      case APPLE:
+        score += 500;
+        break;
+      case BALLOON:
+        balloons.push(new Balloon(this.x, this.y, int(random(1, 2.8)), diff, false));
+        score += 100;
+        break;
+      case TANUKI:
+        score = 0;
+        break;
     }
   };
 }
@@ -72,6 +93,8 @@ function setup() {
   my = height / 2;
 
   apple_img = loadImage('./img/apple.png');
+  raccoon_img = loadImage('./img/tanuki.png');
+  raccoon2_img = loadImage('./img/tanuki2.png');
   balloon_img.push(loadImage('./img/balloon1.png'));
   balloon_img.push(loadImage('./img/balloon2.png'));
   balloon_img.push(loadImage('./img/balloon3.png'));
@@ -88,7 +111,7 @@ function draw() {
   if (shoot_time > 0) {
     shoot_time--;
   }
-  if(step == GAME){
+  if (step == GAME) {
     $.each(balloons, function(i, v) {
       v.update();
     });
@@ -98,12 +121,12 @@ function draw() {
   } else if (step == TITLE) {
     if (result_frame > 0) {
       result_frame--;
-      var dd = (result_frame - 120)/2;
+      var dd = (result_frame - 120) / 2;
       fill(0);
       textSize(50);
       textAlign(CENTER);
       text(result_score.format('mm:ss.SS'), width / 2 + max(0, dd * dd - 1000), height / 4);
-    }else{
+    } else {
       textSize(20);
       textAlign(CENTER);
       noStroke();
@@ -132,7 +155,7 @@ function draw() {
 
     if (--add_frame <= 0) {
       add_frame = map(min(combo, 30), 0, 30, 100, 10);
-      balloons.push(new Balloon(random(100, width - 100), height + 100, false, map(score, 0, 10000, 1, 3)));
+      balloons.push(new Balloon(random(100, width - 100), height + 100, 0, map(score, 0, 10000, 1, 3)));
     }
   }
 
