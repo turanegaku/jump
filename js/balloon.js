@@ -96,22 +96,23 @@ function draw() {
       v.draw();
     });
   } else if (step == TITLE) {
-    textSize(20);
-    textAlign(CENTER);
-    noStroke();
-    fill(100, 100, 200);
-    ellipse(width / 2, height / 2, 100, 100);
-    stroke(0);
-    fill(255);
-    noStroke();
-    text("START!!", width / 2, height / 2 + 10);
-
     if (result_frame > 0) {
       result_frame--;
-      var dd = result_frame - 50;
+      var dd = (result_frame - 120)/2;
       fill(0);
-      textSize(30);
-      text(result_score.format('mm:ss.SS'), width / 2 + max(0, dd * dd - 500), height / 4);
+      textSize(50);
+      textAlign(CENTER);
+      text(result_score.format('mm:ss.SS'), width / 2 + max(0, dd * dd - 1000), height / 4);
+    }else{
+      textSize(20);
+      textAlign(CENTER);
+      noStroke();
+      fill(100, 100, 200);
+      ellipse(width / 2, height / 2, 100, 100);
+      stroke(0);
+      fill(255);
+      noStroke();
+      text("START!!", width / 2, height / 2 + 10);
     }
   }
   var p = sq(shoot_time / shoot_frame);
@@ -130,7 +131,7 @@ function draw() {
     }
 
     if (--add_frame <= 0) {
-      add_frame = map(combo, 0, 30, 100, 10);
+      add_frame = map(min(combo, 30), 0, 30, 100, 10);
       balloons.push(new Balloon(random(100, width - 100), height + 100, false, map(score, 0, 10000, 1, 3)));
     }
   }
@@ -172,7 +173,7 @@ function shoot() {
     score = 10000;
     step = TITLE;
     result_score = ms;
-    result_frame = 100;
+    result_frame = 200;
     if (ms < hims)
       hims = ms;
   }
@@ -184,7 +185,7 @@ function mousePressed() {
   }
   shoot_time = shoot_frame;
 
-  if (step == TITLE) {
+  if (step == TITLE && result_frame <= 0) {
     if ((mx - width / 2) * (mx - width / 2) + (my - height / 2) * (my - height / 2) < 50 * 50) {
       step = GAME;
       start_time = moment();
