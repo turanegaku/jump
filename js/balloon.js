@@ -70,7 +70,10 @@ function Balloon(x, y, object, diff) {
         score += 500;
         break;
       case BALLOON:
-        balloons.push(new Balloon(this.x, this.y, int(random(1, 2.8)), diff, false));
+        if (score > 5000)
+          balloons.push(new Balloon(this.x, this.y, int(random(1, 2.8)), diff, false));
+        else
+          balloons.push(new Balloon(this.x, this.y, 1, diff, false));
         score += 100;
         break;
       case TANUKI:
