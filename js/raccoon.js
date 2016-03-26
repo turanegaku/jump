@@ -33,10 +33,10 @@ var trg = 1000;
 
 function setup() {
   createCanvas(800, 450).parent('p5Canvas');
-  fox.push(loadImage('./kitune.png'));
-  fox.push(loadImage('./tori.png'));
-  raccoon = loadImage('./tanuki.png');
-  raccoon2 = loadImage('./tanuki2.png');
+  fox.push(loadImage('./img/kitune.png'));
+  fox.push(loadImage('./img/tori.png'));
+  raccoon = loadImage('./img/tanuki.png');
+  raccoon2 = loadImage('./img/tanuki2.png');
   textAlign(CENTER);
   textSize(50);
 
