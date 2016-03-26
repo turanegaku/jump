@@ -88,13 +88,14 @@ function draw() {
   if (shoot_time > 0) {
     shoot_time--;
   }
-  $.each(balloons, function(i, v) {
-    v.update();
-  });
-  $.each(balloons, function(i, v) {
-    v.draw();
-  });
-  if (step == TITLE) {
+  if(step == GAME){
+    $.each(balloons, function(i, v) {
+      v.update();
+    });
+    $.each(balloons, function(i, v) {
+      v.draw();
+    });
+  } else if (step == TITLE) {
     textSize(20);
     textAlign(CENTER);
     noStroke();
