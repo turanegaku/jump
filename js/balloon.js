@@ -21,11 +21,14 @@ var raccoon2_img;
 var result_score;
 var result_frame = 0;
 
+var tanuki_color;
+var tanuki_frame;
+
 var BALLOON = 0;
 var APPLE = 1;
 var TANUKI = 2;
 
-function Balloon(x, y, object, diff) {
+function Balloon(x, y, object, diff, i) {
   this.x = x;
   this.y = y;
   this.dy = -1 * diff;
@@ -39,6 +42,9 @@ function Balloon(x, y, object, diff) {
     this.dy = -3 * sqrt(diff);
     this.ddy = 0.1;
     this.dx = random(-1, 1);
+  }
+  if (object == TANUKI) {
+    this.i = i;
   }
 
   this.draw = function() {
@@ -71,12 +77,14 @@ function Balloon(x, y, object, diff) {
         break;
       case BALLOON:
         if (score > 5000)
-          balloons.push(new Balloon(this.x, this.y, int(random(1, 2.8)), diff, false));
+          balloons.push(new Balloon(this.x, this.y, int(random(1, 2.8)), diff, this.i));
         else
           balloons.push(new Balloon(this.x, this.y, 1, diff, false));
         score += 100;
         break;
       case TANUKI:
+        tanuki_color = this.i;
+        tanuki_frame = 30;
         score = 0;
         break;
     }
@@ -107,6 +115,24 @@ function setup() {
 
 function draw() {
   background(255);
+  if (tanuki_frame > 0) {
+    tanuki_frame--;
+    var d = 255 - tanuki_frame * 5;
+    var d2 = 255 - tanuki_frame;
+    switch (tanuki_color) {
+      case 0:
+        background(d2, d, d);
+        break;
+      case 1:
+        background(d, d2, d);
+        break;
+      case 2:
+        background(d, d, d2);
+        break;
+      default:
+
+    }
+  }
   if (mouseX !== 0 || mouseY !== 0) {
     mx = constrain((mouseX + mx * 4) / 5, 0, width);
     my = constrain((mouseY + my * 4) / 5, 0, height);
